@@ -1,4 +1,4 @@
-# ASP.NET Wep API 8.0.421
+# ASP.NET Web API 8.0.421
 
 A RESTful Web API built with ASP.NET Core following clean architecture principles. Built as part of Formulatrix CS Bootcamp Batch 19.
 
