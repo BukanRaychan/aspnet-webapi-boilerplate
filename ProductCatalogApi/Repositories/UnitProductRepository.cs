@@ -42,6 +42,7 @@ public class UnitProductRepository : IUnitProductRepository
     {
         _context.UnitProducts.Add(unitProduct);
         await _context.SaveChangesAsync();
+        await LoadReference(unitProduct);
         return unitProduct;
     }
 
@@ -49,6 +50,7 @@ public class UnitProductRepository : IUnitProductRepository
     {
         _context.UnitProducts.Update(unitProduct);
         await _context.SaveChangesAsync();
+        await LoadReference(unitProduct);
         return unitProduct;
     }
 
@@ -60,5 +62,11 @@ public class UnitProductRepository : IUnitProductRepository
         _context.UnitProducts.Remove(unitProduct);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    private async Task LoadReference(UnitProduct unitProduct)
+    {
+        await _context.Entry(unitProduct).Reference(u => u.Product).LoadAsync();
+        await _context.Entry(unitProduct).Reference(u => u.User).LoadAsync();
     }
 }

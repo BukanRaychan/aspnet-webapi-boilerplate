@@ -19,7 +19,12 @@ public class ProductService : IProductService
     public async Task<List<ProductResponseDto>> GetAllAsync()
     {
         var products = await _productRepository.GetAllAsync();
-        return _mapper.Map<List<ProductResponseDto>>(products);
+        var response = _mapper.Map<List<ProductResponseDto>>(products);
+        foreach (var productResponse in response)
+        {
+            productResponse.Stock = await _productRepository.GetStockCountAsync(productResponse.Id);
+        }
+        return response;
     }
 
     public async Task<ProductResponseDto?> GetByIdAsync(int id)

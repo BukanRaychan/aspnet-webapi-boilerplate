@@ -14,8 +14,6 @@ public class UnitProductProfile : Profile
             .ForMember(dest => dest.SerialNumber,
                 opt => opt.MapFrom((src, dest) => src.SerialNumber ?? dest.SerialNumber))
             .ForMember(dest => dest.ProductId,
-                opt => opt.MapFrom((src, dest) => src.ProductId ?? dest.ProductId))
-            .ForMember(dest => dest.UserId,
-                opt => opt.MapFrom((src, dest) => src.UserId ?? dest.UserId));
+                opt => opt.MapFrom((src, dest) => src.ProductId ?? dest.ProductId));
     }
 }

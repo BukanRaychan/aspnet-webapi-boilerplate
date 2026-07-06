@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductCatalogAPI.DTOs;
@@ -29,6 +30,7 @@ public class UnitProductsController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var unitProduct = await _unitProductService.GetByIdAsync(id);
+
         if (unitProduct == null)
             return NotFound(ApiResponseDto<UnitProductResponseDto>.ErrorResult(
                 $"UnitProduct with id {id} not found", "Not found"));
@@ -46,9 +48,9 @@ public class UnitProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUnitProductDto dto)
     {
-        var created = await _unitProductService.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id },
-            ApiResponseDto<UnitProductResponseDto>.SuccessResult(created, "Unit product created successfully"));
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        var created = await _unitProductService.CreateAsync(userId, dto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id },ApiResponseDto<UnitProductResponseDto>.SuccessResult(created, "Unit product created successfully"));
     }
 
     [HttpPut("{id}")]

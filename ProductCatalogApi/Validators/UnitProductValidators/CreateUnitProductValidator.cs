@@ -17,9 +17,6 @@ public class CreateUnitProductValidator : AbstractValidator<CreateUnitProductDto
             .NotEmpty().WithMessage("Product ID is required")
             .Must(id => context.Products.Any(p => p.Id == id))
             .WithMessage("Product with this ID does not exist");
-
-        RuleFor(x => x.UserId)
-            .Must(id => context.Users.Any(u => u.Id == id))
-            .WithMessage("User with this ID does not exist");
+            
     }
 }

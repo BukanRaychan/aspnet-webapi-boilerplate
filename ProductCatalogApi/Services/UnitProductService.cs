@@ -8,6 +8,7 @@ namespace ProductCatalogAPI.Services;
 public class UnitProductService : IUnitProductService
 {
     private readonly IUnitProductRepository _unitProductRepository;
+
     private readonly IMapper _mapper;
 
     public UnitProductService(IUnitProductRepository unitProductRepository, IMapper mapper)
@@ -35,11 +36,11 @@ public class UnitProductService : IUnitProductService
         return _mapper.Map<List<UnitProductResponseDto>>(unitProducts);
     }
 
-    public async Task<UnitProductResponseDto> CreateAsync(CreateUnitProductDto dto)
+    public async Task<UnitProductResponseDto> CreateAsync(string userId, CreateUnitProductDto dto)
     {
         var unitProduct = _mapper.Map<UnitProduct>(dto);
+        unitProduct.UserId = userId;
         unitProduct.CreatedAt = DateTime.UtcNow;
-
         var created = await _unitProductRepository.CreateAsync(unitProduct);
         return _mapper.Map<UnitProductResponseDto>(created);
     }
@@ -50,7 +51,6 @@ public class UnitProductService : IUnitProductService
         if (existing == null) return null;
 
         _mapper.Map(dto, existing);
-
         var updated = await _unitProductRepository.UpdateAsync(existing);
         return _mapper.Map<UnitProductResponseDto>(updated);
     }
