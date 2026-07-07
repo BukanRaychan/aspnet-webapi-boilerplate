@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.DTOs;
+using WebApi.DTOs.Common;
 using WebApi.DTOs.UnitProductDtos;
 using WebApi.Services;
 
@@ -20,10 +21,10 @@ public class UnitProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PaginationQueryDto pagination)
     {
-        var unitProducts = await _unitProductService.GetAllAsync();
-        return Ok(ApiResponseDto<List<UnitProductResponseDto>>.SuccessResult(unitProducts, "Unit products retrieved successfully"));
+        var unitProducts = await _unitProductService.GetPagedAsync(pagination);
+        return Ok(ApiResponseDto<PagedResponse<UnitProductResponseDto>>.SuccessResult(unitProducts, "Unit products retrieved successfully"));
     }
 
     [HttpGet("{id}")]

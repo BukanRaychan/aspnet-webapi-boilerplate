@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.DTOs.Common;
 using WebApi.Models;
 
 namespace WebApi.Repositories;
@@ -13,12 +14,20 @@ public class UnitProductRepository : IUnitProductRepository
         _context = context;
     }
 
-    public async Task<List<UnitProduct>> GetAllAsync()
+    public async Task<(List<UnitProduct> Items, int TotalCount)> GetPagedAsync(PaginationQueryDto pagination)
     {
-        return await _context.UnitProducts
+        var query = _context.UnitProducts
             .Include(u => u.Product)
             .Include(u => u.User)
+            .OrderBy(u => u.Id);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
             .ToListAsync();
+
+        return (items, totalCount);
     }
 
     public async Task<UnitProduct?> GetByIdAsync(int id)
