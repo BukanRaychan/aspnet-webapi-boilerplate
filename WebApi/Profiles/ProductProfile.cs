@@ -1,8 +1,8 @@
 using AutoMapper;
-using ProductCatalogAPI.DTOs.ProductDtos;
-using ProductCatalogAPI.Models;
+using WebApi.DTOs.ProductDtos;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Profiles;
+namespace WebApi.Profiles;
 
 public class ProductProfile : Profile
 {

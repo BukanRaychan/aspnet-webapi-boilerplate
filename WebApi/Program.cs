@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ProductCatalogAPI.Data;
-using ProductCatalogAPI.Data.Seeders;
-using ProductCatalogAPI.Exceptions;
-using ProductCatalogAPI.Models;
-using ProductCatalogAPI.Repositories;
-using ProductCatalogAPI.Services;
+using WebApi.Data;
+using WebApi.Data.Seeders;
+using WebApi.Exceptions;
+using WebApi.Models;
+using WebApi.Repositories;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

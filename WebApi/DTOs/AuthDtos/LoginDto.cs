@@ -1,4 +1,4 @@
-namespace ProductCatalogAPI.DTOs.AuthDtos;
+namespace WebApi.DTOs.AuthDtos;
 
 public class LoginDto
 {

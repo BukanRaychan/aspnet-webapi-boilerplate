@@ -1,7 +1,7 @@
 using FluentValidation;
-using ProductCatalogAPI.DTOs.ProductDtos;
+using WebApi.DTOs.ProductDtos;
 
-namespace ProductCatalogAPI.Validators.ProductValidators;
+namespace WebApi.Validators.ProductValidators;
 
 public class CreateProductValidator : AbstractValidator<CreateProductDto>
 {

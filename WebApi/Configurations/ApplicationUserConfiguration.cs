@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProductCatalogAPI.Models;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Configurations;
+namespace WebApi.Configurations;
 
 public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {

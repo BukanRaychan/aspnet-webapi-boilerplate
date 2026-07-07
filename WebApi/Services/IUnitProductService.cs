@@ -1,6 +1,6 @@
-using ProductCatalogAPI.DTOs.UnitProductDtos;
+using WebApi.DTOs.UnitProductDtos;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public interface IUnitProductService
 {

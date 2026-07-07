@@ -1,9 +1,10 @@
 using AutoMapper;
-using ProductCatalogAPI.DTOs.ProductDtos;
-using ProductCatalogAPI.Models;
-using ProductCatalogAPI.Repositories;
+using WebApi.DTOs.Common;
+using WebApi.DTOs.ProductDtos;
+using WebApi.Models;
+using WebApi.Repositories;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public class ProductService : IProductService
 {
@@ -16,15 +17,16 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
 
-    public async Task<List<ProductResponseDto>> GetAllAsync()
+    public async Task<PagedResponse<ProductResponseDto>> GetPagedAsync(PaginationQueryDto pagination)
     {
-        var products = await _productRepository.GetAllAsync();
-        var response = _mapper.Map<List<ProductResponseDto>>(products);
+        var (items, totalCount) = await _productRepository.GetPagedAsync(pagination);
+        var response = _mapper.Map<List<ProductResponseDto>>(items);
         foreach (var productResponse in response)
         {
-            productResponse.Stock = products.First(p => p.Id == productResponse.Id).UnitProducts.Count;
+            productResponse.Stock = items.First(p => p.Id == productResponse.Id).UnitProducts.Count;
         }
-        return response;
+
+        return PagedResponse<ProductResponseDto>.Create(response, pagination.PageNumber, pagination.PageSize, totalCount);
     }
 
     public async Task<ProductResponseDto?> GetByIdAsync(int id)

@@ -1,7 +1,7 @@
 using FluentValidation;
-using ProductCatalogAPI.DTOs.AuthDtos;
+using WebApi.DTOs.AuthDtos;
 
-namespace ProductCatalogAPI.Validators.AuthValidators.cs;
+namespace WebApi.Validators.AuthValidators.cs;
 
 public class UpdateProfileValidator : AbstractValidator<UpdateProfileDto>
 {

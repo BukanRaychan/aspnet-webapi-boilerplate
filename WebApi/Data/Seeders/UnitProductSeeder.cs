@@ -1,6 +1,6 @@
-using ProductCatalogAPI.Models;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Data.Seeders;
+namespace WebApi.Data.Seeders;
 
 public class UnitProductSeeder : ISeeder
 {

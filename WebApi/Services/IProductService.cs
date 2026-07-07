@@ -1,10 +1,11 @@
-using ProductCatalogAPI.DTOs.ProductDtos;
+using WebApi.DTOs.Common;
+using WebApi.DTOs.ProductDtos;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public interface IProductService
 {
-    Task<List<ProductResponseDto>> GetAllAsync();
+    Task<PagedResponse<ProductResponseDto>> GetPagedAsync(PaginationQueryDto pagination);
     Task<ProductResponseDto?> GetByIdAsync(int id);
     Task<ProductResponseDto> CreateAsync(CreateProductDto dto);
     Task<ProductResponseDto?> UpdateAsync(int id, UpdateProductDto dto);

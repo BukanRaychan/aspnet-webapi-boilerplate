@@ -1,9 +1,9 @@
 using AutoMapper;
-using ProductCatalogAPI.DTOs.UnitProductDtos;
-using ProductCatalogAPI.Models;
-using ProductCatalogAPI.Repositories;
+using WebApi.DTOs.UnitProductDtos;
+using WebApi.Models;
+using WebApi.Repositories;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public class UnitProductService : IUnitProductService
 {

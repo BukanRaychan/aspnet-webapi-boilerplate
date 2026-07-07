@@ -1,11 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductCatalogAPI.DTOs;
-using ProductCatalogAPI.DTOs.UnitProductDtos;
-using ProductCatalogAPI.Services;
+using WebApi.DTOs;
+using WebApi.DTOs.UnitProductDtos;
+using WebApi.Services;
 
-namespace ProductCatalogAPI.Controllers;
+namespace WebApi.Controllers;
 
 [Authorize]
 [ApiController]

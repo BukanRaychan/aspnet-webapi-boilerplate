@@ -1,10 +1,11 @@
-using ProductCatalogAPI.Models;
+using WebApi.DTOs.Common;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Repositories;
+namespace WebApi.Repositories;
 
 public interface IProductRepository
 {
-    Task<IEnumerable<Product>> GetAllAsync();
+    Task<(List<Product> Items, int TotalCount)> GetPagedAsync(PaginationQueryDto pagination);
     Task<Product?> GetByIdAsync(int id);
     Task<Product> CreateAsync(Product product);
     Task<Product?> UpdateAsync(Product product);

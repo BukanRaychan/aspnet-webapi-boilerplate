@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace ProductCatalogAPI.Models;
+namespace WebApi.Models;
 
 public class ApplicationUser : IdentityUser
 {

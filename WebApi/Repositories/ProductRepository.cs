@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ProductCatalogAPI.Data;
-using ProductCatalogAPI.Models;
+using WebApi.Data;
+using WebApi.DTOs.Common;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Repositories;
+namespace WebApi.Repositories;
 
 public class ProductRepository : IProductRepository
 {
@@ -11,13 +12,6 @@ public class ProductRepository : IProductRepository
     public ProductRepository(AppDbContext context)
     {
         _context = context;
-    }
-
-    public async Task<IEnumerable<Product>> GetAllAsync()
-    {
-        return await _context.Products
-            .Include(p => p.UnitProducts)
-            .ToListAsync();
     }
 
     public async Task<Product?> GetByIdAsync(int id)
@@ -47,6 +41,21 @@ public class ProductRepository : IProductRepository
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<(List<Product> Items, int TotalCount)> GetPagedAsync(PaginationQueryDto pagination)
+    {
+        var query = _context.Products
+            .Include(p => p.UnitProducts)
+            .OrderBy(p => p.Id);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 
     public async Task<int> GetStockCountAsync(int productId)

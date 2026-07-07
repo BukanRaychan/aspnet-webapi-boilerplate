@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Diagnostics;
-using ProductCatalogAPI.DTOs;
+using WebApi.DTOs;
 using System.Net;
 using System.Text.Json;
 
-namespace ProductCatalogAPI.Exceptions;
+namespace WebApi.Exceptions;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {

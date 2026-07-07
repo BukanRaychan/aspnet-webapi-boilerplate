@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using ProductCatalogAPI.Data;
-using ProductCatalogAPI.Models;
+using WebApi.Data;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Repositories;
+namespace WebApi.Repositories;
 
 public class UnitProductRepository : IUnitProductRepository
 {

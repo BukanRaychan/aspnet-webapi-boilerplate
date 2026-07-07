@@ -74,7 +74,7 @@ http://localhost:5280/swagger
 ## Project Structure
 
 ```
-ProductCatalogAPI/
+WebApi/
 ├── Controllers/    # HTTP endpoints, handles requests responses
 │   └── ...
 ├── Data/   # Database context and seeding

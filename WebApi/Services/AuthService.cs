@@ -3,10 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using ProductCatalogAPI.DTOs.AuthDtos;
-using ProductCatalogAPI.Models;
+using WebApi.DTOs.AuthDtos;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public class AuthService : IAuthService
 {

@@ -1,4 +1,4 @@
-namespace ProductCatalogAPI.DTOs;
+namespace WebApi.DTOs;
 
 public class ApiResponseDto<T>
 {

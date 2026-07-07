@@ -1,7 +1,7 @@
 using FluentValidation;
-using ProductCatalogAPI.DTOs.AuthDtos;
+using WebApi.DTOs.AuthDtos;
 
-namespace ProductCatalogAPI.Validators.AuthValidators;
+namespace WebApi.Validators.AuthValidators;
 
 public class RegisterValidator : AbstractValidator<RegisterDto>
 {

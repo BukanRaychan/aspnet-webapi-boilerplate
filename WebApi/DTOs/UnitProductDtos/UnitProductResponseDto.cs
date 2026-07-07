@@ -1,7 +1,7 @@
-using ProductCatalogAPI.DTOs.AuthDtos;
-using ProductCatalogAPI.DTOs.ProductDtos;
+using WebApi.DTOs.AuthDtos;
+using WebApi.DTOs.ProductDtos;
 
-namespace ProductCatalogAPI.DTOs.UnitProductDtos;
+namespace WebApi.DTOs.UnitProductDtos;
 
 public class UnitProductResponseDto
 {

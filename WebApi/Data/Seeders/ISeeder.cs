@@ -1,4 +1,4 @@
-namespace ProductCatalogAPI.Data.Seeders;
+namespace WebApi.Data.Seeders;
 
 public interface ISeeder
 {

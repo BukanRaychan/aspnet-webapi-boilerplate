@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using ProductCatalogAPI.DTOs;
-using ProductCatalogAPI.DTOs.ProductDtos;
-using ProductCatalogAPI.Services;
+using WebApi.DTOs;
+using WebApi.DTOs.Common;
+using WebApi.DTOs.ProductDtos;
+using WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ProductCatalogAPI.Controllers;
+namespace WebApi.Controllers;
 
 [Authorize]
 [ApiController]
@@ -19,10 +20,10 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] PaginationQueryDto pagination)
     {
-        var products = await _productService.GetAllAsync();
-        return Ok(ApiResponseDto<List<ProductResponseDto>>.SuccessResult(products, "Products retrieved successfully"));
+        var products = await _productService.GetPagedAsync(pagination);
+        return Ok(ApiResponseDto<PagedResponse<ProductResponseDto>>.SuccessResult(products, "Products retrieved successfully"));
     }
 
     [HttpGet("{id}")]

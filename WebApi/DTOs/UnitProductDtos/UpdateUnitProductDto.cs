@@ -1,4 +1,4 @@
-namespace ProductCatalogAPI.DTOs.UnitProductDtos;
+namespace WebApi.DTOs.UnitProductDtos;
 
 public class UpdateUnitProductDto
 {

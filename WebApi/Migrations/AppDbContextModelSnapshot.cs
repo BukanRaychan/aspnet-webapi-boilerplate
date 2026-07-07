@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProductCatalogAPI.Data;
+using WebApi.Data;
 
 #nullable disable
 
@@ -145,7 +145,7 @@ namespace WebApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.ApplicationUser", b =>
+            modelBuilder.Entity("WebApi.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -220,7 +220,7 @@ namespace WebApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.Product", b =>
+            modelBuilder.Entity("WebApi.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace WebApi.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.UnitProduct", b =>
+            modelBuilder.Entity("WebApi.Models.UnitProduct", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -294,7 +294,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ProductCatalogAPI.Models.ApplicationUser", null)
+                    b.HasOne("WebApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -303,7 +303,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("ProductCatalogAPI.Models.ApplicationUser", null)
+                    b.HasOne("WebApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -318,7 +318,7 @@ namespace WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProductCatalogAPI.Models.ApplicationUser", null)
+                    b.HasOne("WebApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -327,22 +327,22 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("ProductCatalogAPI.Models.ApplicationUser", null)
+                    b.HasOne("WebApi.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.UnitProduct", b =>
+            modelBuilder.Entity("WebApi.Models.UnitProduct", b =>
                 {
-                    b.HasOne("ProductCatalogAPI.Models.Product", "Product")
+                    b.HasOne("WebApi.Models.Product", "Product")
                         .WithMany("UnitProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProductCatalogAPI.Models.ApplicationUser", "User")
+                    b.HasOne("WebApi.Models.ApplicationUser", "User")
                         .WithMany("UnitProducts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.SetNull)
@@ -353,12 +353,12 @@ namespace WebApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.ApplicationUser", b =>
+            modelBuilder.Entity("WebApi.Models.ApplicationUser", b =>
                 {
                     b.Navigation("UnitProducts");
                 });
 
-            modelBuilder.Entity("ProductCatalogAPI.Models.Product", b =>
+            modelBuilder.Entity("WebApi.Models.Product", b =>
                 {
                     b.Navigation("UnitProducts");
                 });

@@ -1,6 +1,6 @@
-using ProductCatalogAPI.DTOs.AuthDtos;
+using WebApi.DTOs.AuthDtos;
 
-namespace ProductCatalogAPI.Services;
+namespace WebApi.Services;
 
 public interface IAuthService
 {

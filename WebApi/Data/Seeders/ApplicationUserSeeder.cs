@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using ProductCatalogAPI.Models;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Data.Seeders;
+namespace WebApi.Data.Seeders;
 
 public class ApplicationUserSeeder : ISeeder
 {

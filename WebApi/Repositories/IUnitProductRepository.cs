@@ -1,6 +1,6 @@
-using ProductCatalogAPI.Models;
+using WebApi.Models;
 
-namespace ProductCatalogAPI.Repositories;
+namespace WebApi.Repositories;
 
 public interface IUnitProductRepository
 {

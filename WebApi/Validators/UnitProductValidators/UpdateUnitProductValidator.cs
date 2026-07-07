@@ -1,8 +1,8 @@
 using FluentValidation;
-using ProductCatalogAPI.DTOs.UnitProductDtos;
-using ProductCatalogAPI.Data;
+using WebApi.DTOs.UnitProductDtos;
+using WebApi.Data;
 
-namespace ProductCatalogAPI.Validators.UnitProductValidators;
+namespace WebApi.Validators.UnitProductValidators;
 
 public class UpdateUnitProductValidator : AbstractValidator<UpdateUnitProductDto>
 {
