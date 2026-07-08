@@ -203,9 +203,9 @@ HTTP Request
     ↓
 Global Exception Handler   (catches all unhandled errors)
     ↓
-FluentValidation           (rejects invalid request body with 400)
-    ↓
 JWT Authentication         (rejects missing/invalid bearer token with 401)
+    ↓
+FluentValidation           (rejects invalid request body with 400)
     ↓
 Controller                 (receives DTO, returns HTTP response)
     ↓
