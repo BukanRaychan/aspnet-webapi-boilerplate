@@ -35,8 +35,10 @@ dotnet tool install --global dotnet-ef
 | Provider | How to install |
 |---|---|
 | SQLite (default) | Nothing to install — it ships via the `Microsoft.EntityFrameworkCore.Sqlite` package as a local file |
-| PostgreSQL | [Download for Windows](https://www.postgresql.org/download/windows/), or run `winget install PostgreSQL.PostgreSQL.16`, or spin it up in [Docker](https://www.docker.com/products/docker-desktop/) |
-| MySQL | [Download MySQL Community Server](https://dev.mysql.com/downloads/mysql/), or run `winget install Oracle.MySQL`, or use Docker |
+| PostgreSQL | `docker compose up -d postgres` (see [docker-compose.yml](docker-compose.yml)), or [download for Windows](https://www.postgresql.org/download/windows/), or `winget install PostgreSQL.PostgreSQL.16` |
+| MySQL | `docker compose up -d mysql` (see [docker-compose.yml](docker-compose.yml)), or [download MySQL Community Server](https://dev.mysql.com/downloads/mysql/), or `winget install Oracle.MySQL` |
+
+The fastest path for either is Docker — one command, no install, no manual database/user creation, and it matches the credentials the rest of this guide uses (`productcatalog` / `webapi` / `password`). Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ---
 
@@ -64,6 +66,13 @@ To use **PostgreSQL** or **MySQL**, set `Database:Provider` and `ConnectionStrin
 <details>
 <summary><strong>PostgreSQL setup</strong></summary>
 
+**Option A — Docker (fastest):**
+```bash
+docker compose up -d postgres
+```
+Naming the service directly starts only the database container (not the app) — this creates the `productcatalog` database and `webapi` user automatically, no manual creation needed. You'll still run the app locally via `dotnet run` in step 6. (If you want the app containerized too, skip ahead to [Running with Docker Compose](#running-with-docker-compose) instead of continuing this walkthrough.)
+
+**Option B — native install:**
 1. Install PostgreSQL (see Requirements) and confirm the server is running on the default port `5432`.
 2. Create a database and user via `psql` or pgAdmin:
    ```sql
@@ -71,16 +80,24 @@ To use **PostgreSQL** or **MySQL**, set `Database:Provider` and `ConnectionStrin
    CREATE USER webapi WITH PASSWORD 'password';
    GRANT ALL PRIVILEGES ON DATABASE productcatalog TO webapi;
    ```
-3. Your connection string will look like this. Note: use `Host`/`Username`, not `Server`/`User` — Npgsql will reject MySQL-style syntax:
-   ```
-   Host=localhost;Port=5432;Database=productcatalog;Username=webapi;Password=password
-   ```
+
+Either way, your connection string will look like this. Note: use `Host`/`Username`, not `Server`/`User` — Npgsql will reject MySQL-style syntax:
+```
+Host=localhost;Port=5432;Database=productcatalog;Username=webapi;Password=password
+```
 
 </details>
 
 <details>
 <summary><strong>MySQL setup</strong></summary>
 
+**Option A — Docker (fastest):**
+```bash
+docker compose up -d mysql
+```
+Naming the service directly starts only the database container (not the app) — this creates the `productcatalog` database and `webapi` user automatically, no manual creation needed. You'll still run the app locally via `dotnet run` in step 6. (If you want the app containerized too, skip ahead to [Running with Docker Compose](#running-with-docker-compose) instead of continuing this walkthrough.)
+
+**Option B — native install:**
 1. Install MySQL (see Requirements) and confirm the server is running on the default port `3306`.
 2. Create a database and user:
    ```sql
@@ -88,10 +105,11 @@ To use **PostgreSQL** or **MySQL**, set `Database:Provider` and `ConnectionStrin
    CREATE USER 'webapi'@'localhost' IDENTIFIED BY 'password';
    GRANT ALL PRIVILEGES ON productcatalog.* TO 'webapi'@'localhost';
    ```
-3. Connection string format:
-   ```
-   Server=localhost;Port=3306;Database=productcatalog;User=webapi;Password=password
-   ```
+
+Either way, your connection string will look like this:
+```
+Server=localhost;Port=3306;Database=productcatalog;User=webapi;Password=password
+```
 
 </details>
 
@@ -153,6 +171,39 @@ Runs at `http://localhost:5280` by default.
 
 ```
 http://localhost:5280/swagger
+```
+
+---
+
+## Running with Docker Compose
+
+[docker-compose.yml](docker-compose.yml) runs the **app and its database together** — an alternative to steps 3–7 above. Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/). No `.NET SDK`, `dotnet-ef`, or User Secrets setup needed on the host; everything runs in containers.
+
+Services are keyed by the same profile names as `Database:Provider`:
+
+```bash
+# SQLite (default) — self-contained, no separate DB container, no --profile flag
+docker compose up --build
+
+# PostgreSQL — starts postgres + the app wired to it
+docker compose --profile postgres up --build
+
+# MySQL — starts mysql + the app wired to it
+docker compose --profile mysql up --build
+```
+
+The app is reachable at `http://localhost:5280/swagger` once it's up. On startup it automatically runs `Database.Migrate()` and seeds sample data (same as `dotnet run` locally in Development) — no manual `dotnet ef database update` needed.
+
+> **⚠️ The committed `Migrations/` folder only matches one provider at a time.** Whichever provider it was last generated against is the only `docker compose` variant that will start successfully — the others will fail at the migration step with a provider-mismatch SQL error. Check which provider the current migrations target, or regenerate them for the provider you want (see [Database Providers](#database-providers)), before switching.
+
+To override the JWT signing key instead of using the compose default, create a `.env` file next to `docker-compose.yml`:
+```
+JWT_KEY=some-random-secret-key-32chars-or-more
+```
+
+Data persists across restarts in named Docker volumes (`postgres-data`, `mysql-data`, `sqlite-data`). To wipe everything and start fresh:
+```bash
+docker compose down -v
 ```
 
 ---
