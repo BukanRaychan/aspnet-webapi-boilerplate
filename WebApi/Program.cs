@@ -69,7 +69,7 @@ builder.Services.AddScoped<ISeeder, UnitProductSeeder>();
 // Register orchestrator
 builder.Services.AddScoped<DataSeeder>();
 
-// Database — provider chosen by config (Sqlite for local dev, MySql for production)
+// Database — provider chosen by config (Sqlite for local dev, MySql/Postgres for production)
 var dbProvider = builder.Configuration["Database:Provider"] ?? "Sqlite";
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -78,6 +78,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     {
         case "mysql":
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            break;
+        case "postgres":
+        case "postgresql":
+        case "pgsql":
+            options.UseNpgsql(connectionString);
             break;
         default:
             options.UseSqlite(connectionString);

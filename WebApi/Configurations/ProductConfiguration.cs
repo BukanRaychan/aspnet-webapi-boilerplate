@@ -24,7 +24,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("datetime('now')");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Relationship
         builder.HasMany(p => p.UnitProducts)

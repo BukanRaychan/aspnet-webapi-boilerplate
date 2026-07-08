@@ -30,6 +30,14 @@ Install the EF CLI tool globally if you haven't already:
 dotnet tool install --global dotnet-ef
 ```
 
+**Only required if you're not using the default SQLite provider** — install the database engine you intend to run against:
+
+| Provider | Install |
+|---|---|
+| SQLite (default) | Nothing to install — it's a local file, ships via the `Microsoft.EntityFrameworkCore.Sqlite` package |
+| PostgreSQL | [Download PostgreSQL for Windows](https://www.postgresql.org/download/windows/) (or `winget install PostgreSQL.PostgreSQL.16`, or run it in [Docker](https://www.docker.com/products/docker-desktop/)) |
+| MySQL | [Download MySQL Community Server](https://dev.mysql.com/downloads/mysql/) (or `winget install Oracle.MySQL`, or run it in Docker) |
+
 ---
 
 ## Getting Started
@@ -47,15 +55,88 @@ cd Formulatrix_CS_Bootcamp_Batch19
 dotnet restore
 ```
 
-### 3. Apply migrations
+### 3. Choose a database provider
+
+The default provider is **SQLite** — it needs no setup, so you can skip straight to [step 4](#4-initialize-user-secrets) if that's what you're using.
+
+To use **PostgreSQL** or **MySQL** instead, set `Database:Provider` and `ConnectionStrings:DefaultConnection` via User Secrets (see step 4 below) rather than editing `appsettings.json` directly, since the connection string usually contains a password.
+
+<details>
+<summary><strong>PostgreSQL setup</strong></summary>
+
+1. Install PostgreSQL (see Requirements above) and make sure the server is running (default port `5432`).
+2. Create a database and user matching whatever you'll put in your connection string, e.g. via `psql` or pgAdmin:
+   ```sql
+   CREATE DATABASE productcatalog;
+   CREATE USER webapi WITH PASSWORD 'password';
+   GRANT ALL PRIVILEGES ON DATABASE productcatalog TO webapi;
+   ```
+3. Connection string format (note: `Host`/`Username`, **not** `Server`/`User` — that's MySQL syntax and Npgsql will reject it):
+   ```
+   Host=localhost;Port=5432;Database=productcatalog;Username=webapi;Password=password
+   ```
+
+</details>
+
+<details>
+<summary><strong>MySQL setup</strong></summary>
+
+1. Install MySQL (see Requirements above) and make sure the server is running (default port `3306`).
+2. Create a database and user:
+   ```sql
+   CREATE DATABASE productcatalog;
+   CREATE USER 'webapi'@'localhost' IDENTIFIED BY 'password';
+   GRANT ALL PRIVILEGES ON productcatalog.* TO 'webapi'@'localhost';
+   ```
+3. Connection string format:
+   ```
+   Server=localhost;Port=3306;Database=productcatalog;User=webapi;Password=password
+   ```
+
+</details>
+
+> **Migrations are provider-specific** — the committed `Migrations/` folder targets whatever provider it was last generated against. If you switch providers, see [Database Providers](#database-providers) below before running the next step.
+
+### 4. Initialize User Secrets
+
+[User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) keeps developer-specific values (real connection strings, JWT signing keys) out of source control. It's local-only and unencrypted — never use it for actual production secrets, but it's the right tool for local dev.
+
+Run once per machine, from the `WebApi/` folder:
+
+```bash
+dotnet user-secrets init
+```
+
+This adds a `UserSecretsId` GUID to `WebApi.csproj` and creates an empty secrets store for this project outside the repo (`%APPDATA%\Microsoft\UserSecrets\<id>\secrets.json` on Windows).
+
+If you're using the default SQLite provider, set at minimum a JWT key (the base `appsettings.json` ships with an empty `Jwt:Key` on purpose):
+
+```bash
+dotnet user-secrets set "Jwt:Key" "some-random-dev-only-secret-key-32chars+"
+```
+
+If you're using PostgreSQL or MySQL, also set the provider and connection string (values from step 3):
+
+```bash
+dotnet user-secrets set "Database:Provider" "Postgres"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=productcatalog;Username=webapi;Password=password"
+```
+
+Verify what's set at any time with:
+
+```bash
+dotnet user-secrets list
+```
+
+### 5. Apply migrations
 
 ```bash
 dotnet ef database update
 ```
 
-This creates the `ProductCatalog.db` SQLite file and applies all migrations.
+This creates the schema in whichever database your `Database:Provider`/connection string point to (`ProductCatalog.db` for the SQLite default).
 
-### 4. Run the app
+### 6. Run the app
 
 ```bash
 dotnet run
@@ -63,7 +144,7 @@ dotnet run
 
 The app runs at `http://localhost:5280` by default.
 
-### 5. Open Swagger UI
+### 7. Open Swagger UI
 
 ```
 http://localhost:5280/swagger
@@ -75,34 +156,37 @@ http://localhost:5280/swagger
 
 ```
 WebApi/
-├── Controllers/    # HTTP endpoints, handles requests responses
+├── Configurations/       # EF Core IEntityTypeConfiguration<T> classes — column types,
+│   └── ...                 max lengths, indexes, relationships, per entity
+├── Controllers/           # HTTP endpoints, handles requests/responses only
 │   └── ...
-├── Data/   # Database context and seeding
+├── Data/                  # AppDbContext (EF Core) and startup seeding orchestration
+│   └── Seeders/             # One ISeeder implementation per entity (idempotent — skips if data exists)
+├── DTOs/                  # Data Transfer Objects — controls API input/output shape
+│   ├── AuthDtos/            # Register/login request & response shapes
+│   ├── Common/               # Cross-feature wrappers, e.g. ApiResponseDto<T>, PagedResponse<T>
+│   ├── ProductDtos/          # Product create/update/response shapes
+│   └── UnitProductDtos/      # UnitProduct create/update/response shapes
+├── Exceptions/            # GlobalExceptionHandler — converts unhandled exceptions to ProblemDetails
 │   └── ...
-├── DTOs/   # Data Transfer Objects — controls API input/output shape
-│   ├── AuthDtos/
-│   │   └── ...
-│   └── ProductDtos/
-│       └── ...
-├── Exceptions/   # Global error handling
+├── Migrations/            # EF Core auto-generated migration files (provider-specific, see below)
+├── Models/                # Database entity classes (EF Core maps these to tables)
 │   └── ...
-├── Migrations/           # EF Core auto-generated migration files
-├── Models/               # Database entity classes
+├── Profiles/              # AutoMapper mapping profiles (Entity <-> DTO)
 │   └── ...
-├── Profiles/             # AutoMapper mapping profiles
+├── Repositories/          # Database query layer — only talks to AppDbContext, no business logic
 │   └── ...
-├── Repositories/         # Database query layer
+├── Services/              # Business logic layer — orchestrates repositories, mapping, validation-adjacent rules
 │   └── ...
-├── Services/             # Business logic layer
-│   └── ...
-├── Validators/           # FluentValidation rules
+├── Validators/            # FluentValidation rules, one file per DTO
 │   ├── AuthValidators/
 │   │   └── ...
 │   └── ProductValidators/
 │       └── ...
-├── appsettings.json
+├── appsettings.json           # Shared defaults, committed — no real secrets
 ├── appsettings.Development.json
-└── Program.cs
+├── appsettings.Production.json
+└── Program.cs              # Composition root: DI registration, middleware pipeline, DB provider switch
 ```
 
 ---
@@ -268,7 +352,7 @@ Authentication is JWT-based: the API signs tokens with the symmetric `Jwt:Key`. 
 | `Jwt:Key` | Secret signing key (min 32 chars). Dev key in `appsettings.json`; override in production. |
 | `Jwt:Issuer` | JWT issuer name |
 | `Jwt:Audience` | JWT audience name |
-| `Database:Provider` | Database engine: `Sqlite` (default, local dev) or `MySql` |
+| `Database:Provider` | Database engine: `Sqlite` (default, local dev), `MySql`, or `Postgres`/`PostgreSql`/`Pgsql` (case-insensitive) |
 | `ConnectionStrings:DefaultConnection` | Database connection string (defaults to local SQLite) |
 | `Cors:AllowedOrigins` | Array of frontend origins allowed by CORS |
 
@@ -290,22 +374,34 @@ A ready-made `appsettings.Production.json` template ships with the project; secr
 
 ## Database Providers
 
-The DB engine is selected at startup from `Database:Provider`, so the same code runs on SQLite locally and MySQL in production with no code changes:
+The DB engine is selected at startup from `Database:Provider` (see [Program.cs](WebApi/Program.cs)'s provider switch), so the same code can run against any of the three with no code changes — only config:
 
 | Provider | When | Connection string example |
 |---|---|---|
 | `Sqlite` | Local dev (default) | `Data Source=ProductCatalog.db` |
 | `MySql` | Production | `Server=host;Port=3306;Database=productcatalog;User=appuser;Password=...` |
+| `Postgres` | Production | `Host=host;Port=5432;Database=productcatalog;Username=appuser;Password=...` |
 
-> **⚠️ Migrations are provider-specific.** The committed `Migrations/` folder was generated for **SQLite**. When you switch to MySQL, delete the `Migrations/` folder and regenerate it against MySQL before deploying:
+> **⚠️ Migrations are provider-specific.** The committed `Migrations/` folder is generated against exactly one provider at a time — column types, default-value SQL, and identity syntax differ between SQLite/MySQL/Postgres. If you switch providers, delete the `Migrations/` folder and regenerate against the new one:
 >
 > ```bash
-> # with Database:Provider=MySql and a reachable MySQL connection string
+> # with Database:Provider and ConnectionStrings:DefaultConnection (via User Secrets) pointing at the new provider
 > rm -r Migrations
 > dotnet ef migrations add InitialCreate
+> dotnet ef database update
 > ```
 >
-> The app calls `Database.Migrate()` on startup, so once the migrations match the provider, the schema is applied automatically on first run.
+> The app also calls `Database.Migrate()` on startup, so once the migrations match the provider, the schema applies automatically on next run too.
+
+### Removing providers you don't use
+
+All three EF Core provider packages (`Microsoft.EntityFrameworkCore.Sqlite`, `Pomelo.EntityFrameworkCore.MySql`, `Npgsql.EntityFrameworkCore.PostgreSQL`) are referenced in [WebApi.csproj](WebApi/WebApi.csproj) so the boilerplate supports all three out of the box. If your project will only ever target one database, it's safe to remove the packages (and matching `case` branches in `Program.cs`'s provider switch) for the ones you don't need:
+
+```bash
+dotnet remove package Pomelo.EntityFrameworkCore.MySql
+dotnet remove package Npgsql.EntityFrameworkCore.PostgreSQL
+# keep only Microsoft.EntityFrameworkCore.Sqlite, for example
+```
 
 ---
 

@@ -19,7 +19,7 @@ public class UnitProductConfiguration : IEntityTypeConfiguration<UnitProduct>
 
         builder.Property(p => p.CreatedAt)
             .IsRequired()
-            .HasDefaultValueSql("datetime('now')");
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
     
         builder.HasIndex(p => p.SerialNumber)
                 .IsUnique();
