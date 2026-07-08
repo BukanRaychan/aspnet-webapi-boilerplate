@@ -95,7 +95,7 @@ To use **PostgreSQL** or **MySQL**, set `Database:Provider` and `ConnectionStrin
 
 </details>
 
-> **Migrations are provider-specific.** The committed `Migrations/` folder targets whichever provider it was last generated against — if you switch, see [Database Providers](#database-providers) before running the next step.
+> **Migrations are provider-specific.** The committed `Migrations/` folder targets whichever provider it was last generated against (the current provider is PostgreSQL) — if you switch, see [Database Providers](#database-providers) before running the next step.
 
 ### 4. Initialize User Secrets
 
