@@ -9,6 +9,7 @@ public class ProductProfile : Profile
     public ProductProfile()
     {
         CreateMap<Product, ProductResponseDto>();
+        CreateMap<UnitProduct, ProductUnitItemDto>();
         CreateMap<CreateProductDto, Product>();
         CreateMap<UpdateProductDto, Product>()
             .ForMember(dest => dest.Name,

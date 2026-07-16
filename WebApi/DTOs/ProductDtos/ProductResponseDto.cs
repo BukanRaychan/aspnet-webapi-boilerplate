@@ -8,4 +8,5 @@ public class ProductResponseDto
     public decimal Price { get; set; }
     public int? Stock { get; set; }
     public DateTime CreatedAt { get; set; }
+    public List<ProductUnitItemDto> UnitProducts { get; set; } = new();
 }

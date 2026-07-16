@@ -46,6 +46,7 @@ public class UnitProductsController : ControllerBase
         return Ok(ApiResponseDto<List<UnitProductResponseDto>>.SuccessResult(unitProducts, "Unit products retrieved successfully"));
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUnitProductDto dto)
     {
@@ -54,6 +55,8 @@ public class UnitProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id },ApiResponseDto<UnitProductResponseDto>.SuccessResult(created, "Unit product created successfully"));
     }
 
+    
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateUnitProductDto dto)
     {
@@ -67,6 +70,8 @@ public class UnitProductsController : ControllerBase
         return Ok(ApiResponseDto<UnitProductResponseDto>.SuccessResult(updated, "Unit product updated successfully"));
     }
 
+
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

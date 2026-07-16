@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
@@ -39,6 +38,7 @@ public class ProductsController : ControllerBase
         return Ok(ApiResponseDto<ProductResponseDto>.SuccessResult(product, "Product retrieved successfully"));
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
     {
@@ -46,6 +46,7 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, ApiResponseDto<ProductResponseDto>.SuccessResult(created, "Product created successfully"));
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateProductDto dto)
     {
@@ -59,6 +60,7 @@ public class ProductsController : ControllerBase
         return Ok(ApiResponseDto<ProductResponseDto>.SuccessResult(updated, "Product updated successfully"));
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
